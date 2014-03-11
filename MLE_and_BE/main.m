@@ -7,19 +7,19 @@ for i = 1:5
     [e1, e2] = MLE_BE_simulate (T);
     errors (i, :) = [e1 e2];
 end
-errors
+errors(:, 1)'
 
 figure (1)
-plot (1:5, errors (:, 1)', 'r')
+plot (Ts, errors (:, 1)', 'r')
 hold on
-plot (1:5, errors (:, 2)', 'b')
+plot (Ts, errors (:, 2)', 'b')
 
 title ('MLE and BE error rates for various sequence lengths');
 xlabel ('Sequnce length');
 ylabel ('Error rate');
 
-axis([100 500 0 0.1]);
+axis([100 500 0 0.02]);
 
 legend ('Maximum likelihood estimation', 'Bayesian estimation');
 
-saveas (gcf, 'result.png', 'png' )
+%saveas (gcf, 'result.png', 'png' )
