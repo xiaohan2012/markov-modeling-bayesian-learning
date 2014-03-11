@@ -1,4 +1,6 @@
 function  table = Freq (numbers)
   %compute the frequency for all the elements in `numbers`
-  [u, _, j] = unique (numbers);
-  table = [accumarray(j', 1), u'];
+  unique_numbers = unique (numbers);
+  unique_numbers = unique_numbers (:);
+  
+  table = [histc(numbers(:),unique_numbers), unique_numbers];
