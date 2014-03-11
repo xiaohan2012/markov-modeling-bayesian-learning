@@ -1,0 +1,178 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+
+\usepackage{graphicx}
+\graphicspath{ {./imgs/} }
+
+\usepackage{float}
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+\textsc{University if Helsinki, Department of Computer Science} \\ [25pt] % Your university, school and/or department name(s)
+\horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
+\huge Markov Modeling and Bayesian Learning \\ % The assignment title
+\horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
+}
+
+\author{Han Xiao} % Your namea
+
+\date{\normalsize\today} % Today's date or a custom date
+
+\begin{document}
+
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+\section{Problem 1}
+
+\lipsum[2] % Dummy text
+
+Sequence generation:
+
+For some given sequence length $T$, the following configuraiton is made:
+
+\begin {itemize}
+  \item Each sequence is generated according to some {\em random} state transition probability table $P$.
+  \item Each entry in table $P$ is {\em uniformly distribued} (and then normalized).
+  \item The starting probabilities for each bigram are equal (0.25).
+\end {itemize}
+
+
+Then {\em 1000} sequences was randomly generated, each of which is used to estimate the parameters by Maximum Likelihood estimation and Bayesian estimation.
+
+Denote the estimated parameters as $P'_{ijk}$ and the true parameters as $P_{ijk}$, the error rate for each estimated paraemter is calculated as:
+
+\[ E_{ijk} = \frac{|P'_{ijk} - P_{ijk}|} {P_{ijk}} \]
+
+And the total error rate of the estimated paramters is calculated as the mean of all the individual error rates:
+
+\[E_{total} = \frac {1} {n} \sum\limits_{ijk} \frac{|P'_{ijk} - P_{ijk}| }{ P_{ijk}}\]
+
+where $n$ is the number of paramters, which is $64$ in this case.
+
+The resuling plot is like: 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=.8]{mle-be-estimation}
+  \caption{Comparison between MLE and BE for various sequence lengths}
+\end{figure}
+
+%how to set matlab plot size
+%set(0, 'DefaultFigurePosition', [ left bottom width height ]);
+
+
+
+%------------------------------------------------
+
+\subsection{Heading on level 2 (subsection)}
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. 
+\begin{align}
+A = 
+\begin{bmatrix}
+A_{11} & A_{21} \\
+A_{21} & A_{22}
+\end{bmatrix}
+\end{align}
+Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
+
+%------------------------------------------------
+
+\subsubsection{Heading on level 3 (subsubsection)}
+
+\lipsum[3] % Dummy text
+
+\paragraph{Heading on level 4 (paragraph)}
+
+\lipsum[6] % Dummy text
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 2
+%----------------------------------------------------------------------------------------
+
+\section{Lists}
+
+%------------------------------------------------
+
+\subsection{Example of list (3*itemize)}
+\begin{itemize}
+	\item First item in a list 
+		\begin{itemize}
+		\item First item in a list 
+			\begin{itemize}
+			\item First item in a list 
+			\item Second item in a list 
+			\end{itemize}
+		\item Second item in a list 
+		\end{itemize}
+	\item Second item in a list 
+\end{itemize}
+
+%------------------------------------------------
+
+\subsection{Example of list (enumerate)}
+\begin{enumerate}
+\item First item in a list 
+\item Second item in a list 
+\item Third item in a list
+\end{enumerate}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}

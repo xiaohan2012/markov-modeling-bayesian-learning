@@ -1,2 +1,8 @@
 *.*~
 octave-core
+*.png
+*.jpg
+
+*.aux
+*.log
+*.pdf
