@@ -1,4 +1,4 @@
-function [MLE_error_sum, BE_error_sum]= simulate (T)
+function [MLE_error_sum, BE_error_sum]= MLE_BE_simulate (T)
 %simulate the 2nd order markov chain and compare the error between
 %MLE and BE
 
@@ -10,6 +10,7 @@ lambda = ones (16, 4); %the Dirichlet hyperparameter
 
 sequences = ones (1, T);
 
+%fix the P, for debugging purpose
 P =  ones (16, 4);
 P = P ./ repmat(sum (P, 2), 1, 4);
 
@@ -18,11 +19,10 @@ MLE_error_sum = 0; BE_error_sum  = 0; %accumulated error made by MLE and BE
 
 %for the ith sequence
 for i=1:N
-    %P =  rand (16, 4);  %randomly generate the transition matrix
-    %p = P ./ repmat(sum (P, 2), 1, 4); %normalize it
+    P =  rand (16, 4);  %randomly generate the transition matrix
+    P = P ./ repmat(sum (P, 2), 1, 4); %normalize it
 
     %generate the sequence of ACGTs using the prob dist P
-    
     %for the first two states, generate them by pi
     %calc the cumulative sum pi, randomly generate one number from [0, 1)
     
@@ -30,8 +30,8 @@ for i=1:N
     
     for t = 3: T
         last_two = sequences (t-2:t-1);
-        r = rand () ;
-        sequences (1, t) = find(r < cumsum(P(AssignmentToIndex (last_two, [4 4]), :)), 1);
+        r = rand () ;                   
+        sequences (t) = find(cumsum(P(AssignmentToIndex (last_two, [4 4]), :))>=r, 1);
     end
 
     %get the trigrams
@@ -90,8 +90,12 @@ for i=1:N
             MLE_P (k, :) = ones (4, 1) / 4;
         end
     end
-    
-    MLE_error_sum = MLE_error_sum + sum(sum(abs(MLE_P - P) ./ P ));
-    BE_error_sum = BE_error_sum + sum(sum(abs(BE_P - P) ./ P));
+    e1 = sum(sum(abs(MLE_P - P) ./ P )) / 64;
+    e2 = sum(sum(abs(BE_P - P) ./ P)) / 64;
+    MLE_error_sum = MLE_error_sum + e1 / 64;
+    BE_error_sum = BE_error_sum + e2 / 64;
 end
+
+MLE_error_sum = MLE_error_sum / N;
+BE_error_sum = BE_error_sum / N;
 
