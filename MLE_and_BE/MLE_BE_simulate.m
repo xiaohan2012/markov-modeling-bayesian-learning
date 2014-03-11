@@ -4,7 +4,7 @@ function [MLE_error_sum, BE_error_sum]= MLE_BE_simulate (T)
 
 pi = ones (16, 1) / sum (ones (16, 1));%the initial state distribution
 
-N = 50; %number of simulations
+N = 1000; %number of simulations
 
 lambda = ones (16, 4); %the Dirichlet hyperparameter
 
