@@ -123,8 +123,8 @@ The resuling plot is like:
 %----------------------------------------------------------------------------------------
 
 \section{Problem 4}
-\subsection {Fixing $p$}
-I first fix $p$ and vary the error parameter $\varepsilon$ from 0 to 1 at a step size of 0.05. Then for each $\varepsilon$, 500 HMM sequences are generated randomly by $P$ and $E$.
+\subsection {Phenomenon}
+I fix $p$ and vary the error parameter $\varepsilon$ from 0 to 1 at a step size of 0.05. Then for each $\varepsilon$, 500 HMM sequences are generated randomly by $P$ and $E$.
 
 The error of the parameter estimation $P^{'}$ is defined as the mean of the element-wise difference between $P$ and $P^{'}$ 
 
@@ -150,6 +150,51 @@ The error mean for $p \in \{0.2, 0.5, 0.8\}$ are given below:
   \caption {ML parameter estimation error when $p$=0.8}
 \end{figure}
 
+\subsection {Explanation}
+
+There are two remarkable oberservations.
+
+\begin{itemize}
+\item for $p=0.2$ and $p=0.8$, the error mean first increases. After reaching the peak at about 0.8, it starts to fall.
+\item while the plot for $p=0.2$ and $p=0.8$ are very similar, the plot for $p=0.5$ is not the case, it is flat!
+\end {itemize}
+
+For the first observation:\newline
+
+Denote the state set as $\{S_1, S_2\}$ and the observation set as $\{O_1, O_2\}$. \newline
+
+For the first observation, it is intuitive to come up that lower error mean results from lower $\varepsilon$. Because the observations reflect the true state transition more or less accurately. 
+
+However, it might be counterintuitive for large $\varepsilon$. Here are some explanation for this counter-intuition. \newline
+
+Let's assume $\varepsilon=1$, in which case each observation is flipped from its true underlying state. That is $S_1$ generates $O_2$ and $S_2$ generates $O_1$. 
+
+We denote the count of certain observations as $C (O_1)$ or $C (O_1, O_2)$ for the count of $(O_1, O_2)$ pairs. Then $C (O_1, O_1) = C (S_2, S_2)$, $C (O_2, O_2) = C (S_1, S_1)$ , $C (O_2, O_1) = C (S_1, S_2)$ and $C (O_1, O_2) = C (S_2, S_1)$ 
+
+As there is only one parameter $p$ for the HMM state transition process, number of sequential pairs $(S_1,S_1) \approx (S_2,S_2)$ should be roughly equal if sample size is large enough. Similarly, $(S_1, S_2) \approx (S_2, S_1)$. 
+
+Also assuming a uniform initial state distribution, $C (S_1) \approx C (S_2)$. \newline
+
+As a result, $C (O_1, O_1)$  should be roughly equal to $C (O_2, O_2)$ and $C (O_2, O_1)$  should be roughly equal to $C (O_1, O_2)$ and $C (O_1)$ is rougly equal to $C (O_2)$. 
+
+\begin {align*}
+  P (S_1, S_2) &= \frac {C (S_2)} {C (S_1, S_2)} \\
+  &= \frac {C (O_1)} {C (O_2, O_1)} \\
+  &\approx \frac {C (O_2)} {C (O_1, O_2)}\\
+  &=P (O_1, O_2)
+\end {align*}
+
+Therefore, the error mean for large $\varepsilon$ is quite close to that of small $\varepsilon$.
+
+For the second observation:\newline
+
+When $p=0.5$, the state transition process is like tossing a fair coin again and again.
+
+The low error mean for both small and great $p$ can be explained like above. In case $\varepsilon=0.5$, flipping of the observation is like another process of tossing fair coin.
+
+Though certain observations may be flipped, the cases in which $S_1$ emits $O_2$ are compansated by the fact that roughly the same amount of emission from $S_2$ to $O_1$, thus the sufficient statistics does not change much.
+
+As a conclusion, the error mean for $p=0.5$ does not vary much from that of large or small $p$ values.
 
 %------------------------------------------------
 
