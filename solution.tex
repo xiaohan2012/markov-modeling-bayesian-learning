@@ -118,35 +118,38 @@ The resuling plot is like:
 
 
 
-%------------------------------------------------
-
-\subsection{Heading on level 2 (subsection)}
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. 
-\begin{align}
-A = 
-\begin{bmatrix}
-A_{11} & A_{21} \\
-A_{21} & A_{22}
-\end{bmatrix}
-\end{align}
-Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
-
-%------------------------------------------------
-
-\subsubsection{Heading on level 3 (subsubsection)}
-
-\lipsum[3] % Dummy text
-
-\paragraph{Heading on level 4 (paragraph)}
-
-\lipsum[6] % Dummy text
-
 %----------------------------------------------------------------------------------------
-%	PROBLEM 2
+%	PROBLEM 4
 %----------------------------------------------------------------------------------------
 
-\section{Lists}
+\section{Problem 4}
+\subsection {Fixing $p$}
+I first fix $p$ and vary the error parameter $\varepsilon$ from 0 to 1 at a step size of 0.05. Then for each $\varepsilon$, 500 HMM sequences are generated randomly by $P$ and $E$.
+
+The error of the parameter estimation $P^{'}$ is defined as the mean of the element-wise difference between $P$ and $P^{'}$ 
+
+\[ \mathrm{Error} (P^{'}, P) = \frac {1} {4} \sum_{i} \sum_{j} \frac{|P^{'}_{i,j} - P_{i,j}|}{P_{i,j}} \]
+
+The error mean for $p \in \{0.2, 0.5, 0.8\}$ are given below:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=.8]{{noisyhmm-errorrate-p=0.200000}.png}
+  \caption {ML parameter estimation error when $p$=0.2}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=.8]{{noisyhmm-errorrate-p=0.500000}.png}
+  \caption {ML parameter estimation error when $p$=0.5}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=.8]{{noisyhmm-errorrate-p=0.800000}.png}
+  \caption {ML parameter estimation error when $p$=0.8}
+\end{figure}
+
 
 %------------------------------------------------
 
