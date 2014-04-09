@@ -88,7 +88,7 @@ For some given sequence length $T$, the following configuraiton is made:
 
 \begin {itemize}
   \item Each sequence is generated according to some {\em random} state transition probability table $P$.
-  \item Each entry in table $P$ is {\em uniformly distribued} (and then normalized).
+  \item Each entry in table $P$ are equal
   \item The starting probabilities for each bigram are equal (0.25).
 \end {itemize}
 
@@ -117,7 +117,87 @@ The resuling plot is like:
 %set(0, 'DefaultFigurePosition', [ left bottom width height ]);
 
 
+%----------------------------------------------------------------------------------------
+%	PROBLEM 2
+%----------------------------------------------------------------------------------------
 
+\section{Bayes Factor}
+
+\subsection {Theory}
+
+We denote $M_0$ as the zero order Markov process, also known as the multinomial process, $M_1$ as the first order Markov process and $M_2$ as the second order Markov process and $x$ as the observed sequence. Then the Bayes factor between $M_1$ and $M_2$ and between $M_0$ and $M_1$ are defined as:
+
+\begin {align*}
+  B_{01} &= \frac {p (x| M_0)} {p(x | M_0} \\
+  B_{12} &= \frac {p (x| M_1)} {p(x | M_2)}
+\end {align*}
+
+For the Markov 0 model, the predictive probability 
+
+\begin {equation}
+p (x| M_0) = \int_{\Theta} \theta_{A}^{n_{A}} \theta_{C}^{n_{C}} \theta_{G}^{n_{G}} \theta_{T}^{n_{T}} d\Theta
+\end {equation}
+
+in which $\theta_A, \theta_C, \theta_G, \theta_T$ are the multinomial process parameters, which sum up to 1. $n_A, n_C, n_G, n_T$ are the number of occurences of ${A, C, G, T}$ respectively. In addition $\Theta = (\theta_A, \theta_C, \theta_G, \theta_T)$.
+\\\\
+Similarly, the first order Markov chain case involves four independent multinimial processes, in which each process is preceded by one of the values. The predictive probability in this case is:
+
+\begin {align*}
+p (x| M_1) &= \int_{\Theta_A} \theta_{AA}^{n_{AA}} \theta_{AC}^{n_{AC}} \theta_{AG}^{n_{AG}} \theta_{AT}^{n_{AT}} d\Theta_A \times\\
+&= \int_{\Theta_C} \theta_{CA}^{n_{CA}} \theta_{CC}^{n_{CC}} \theta_{CG}^{n_{CG}} \theta_{CT}^{n_{CT}} d\Theta_C \times \\
+&= \int_{\Theta_G} \theta_{GA}^{n_{GA}} \theta_{GC}^{n_{GC}} \theta_{GG}^{n_{GG}} \theta_{GT}^{n_{GT}} d\Theta_G \times \\
+&= \int_{\Theta_T} \theta_{TA}^{n_{TA}} \theta_{TC}^{n_{GC}} \theta_{TG}^{n_{TG}} \theta_{TT}^{n_{TT}} d\Theta_T \\
+\end {align*}
+
+in which, $n_{i,j}$, where $i,j \in {A,C,G,T}$, denotes the number of occurences of $(i,j)$ pairs in the sequence. Similarly, $\theta_{i,j}$ denotes the probability for $j$ to occur in case of being preceded by $i$. $\Theta_i$ denotes the parameter set $(\theta_{i,A}, \theta_{i,C}, \theta_{i,G}, \theta_{i,T})$.
+\\\\
+Similarly, the second order Markov chain is extended to 16 independent multinomial process. The predictive probability is:
+
+\begin {equation}
+  p (x| M_2) = \prod_{i,j} \int_{\Theta_{ij}} \theta_{i,j,A}^{n_{i,j,A}} \theta_{i,j,C}^{n_{i,j,C}} \theta_{i,j,G}^{n_{i,j,G}} \theta_{i,j,T}^{n_{i,j,T}} d\Theta_{i,j} 
+\end {equation}  
+
+Assuming a Dirichlet distribution as the prior for the multinomial process, the integral has analytical result. 
+\\\\
+For the Markov 0 model, 
+\begin {equation}
+p (x| M_0) = \frac{\Gamma (\alpha_A + \alpha_C + \alpha_G + \alpha_T) \prod\limits_{m \in {A,C,G,T}} \Gamma (\alpha_m + n_m)} {\prod\limits_{m \in {A,C,G,T}} \Gamma (\alpha_m) \Gamma (\sum\limits_{m \in {A,C,G,T}}\alpha_m + \sum\limits_{m \in {A,C,G,T}}n_m)}
+\end {equation}  
+
+For the Markov 1 model
+
+\begin {equation}
+p (x| M_1) = \prod\limits_{i \in {A,C,G,T}} \frac{\Gamma (\alpha_{iA} + \alpha_{iC} + \alpha_{iG} + \alpha_iT) \prod\limits_{m \in {A,C,G,T}} \Gamma (\alpha_{im} + n_{im})} {\prod\limits_{m \in {A,C,G,T}} \Gamma (\alpha_{im}) \Gamma (\sum\limits_{m \in {A,C,G,T}}\alpha_{im} + \sum\limits_{m \in {A,C,G,T}}n_{im})}
+\end {equation}  
+
+For the Markov 2 model
+
+\begin {equation}
+p (x| M_1) = \prod\limits_{i,j \in {A,C,G,T}} \frac{\Gamma (\alpha_{ijA} + \alpha_{ijC} + \alpha_{ijG} + \alpha_ijT) \prod\limits_{m \in {A,C,G,T}} \Gamma (\alpha_{ijm} + n_{ijm})} {\prod\limits_{m \in {A,C,G,T}} \Gamma (\alpha_{ijm}) \Gamma (\sum\limits_{m \in {A,C,G,T}}\alpha_{ijm} + \sum\limits_{m \in {A,C,G,T}}n_{ijm})}
+\end {equation}  
+
+\subsection {Experiment Setup}
+
+I generated 1000 sequences, each of which is generated based on randomly generated state transition table, in which each entry in the table are uniformly distribued (and then normalized). In other word, two levels of randomness are involved. First level is associated with the random nature of the generation of gene sequence, which is essentially a Markov random process. Second level of randomness is associated with the randomness of Markov state transition probability table. 
+\\\\ 
+The purpose of the extra level of randomness is to avoid using a fixed or a fixed set of Markov random process, thus enable us to observe Bayes Factor in the general case.
+
+\subsection {Pitfall of Prior Setup}
+One thing to notice is the setting of prior parameter. For the Markov 0 case, it is tempting to set the prior as $Beta (1, 1, 1, 1)$ and for the markov 1 case, four priors all be the same, $Beta (1, 1, 1, 1)$. However, there is one problem here in terms of both interpretation and theory. In tmerms of interpretation, the prior $Beta (1,1,1,1)$  resembles that we have some statistics in which each type of values appear once prior to our experiment. Then unfairness arises. For the Markov 0 case, we have 4 such values, while for Markov 1 case, with 4 priors, we have 16 such values ``beforehand'', which is not reasonable. 
+\\\\
+To make it fair, we should ensure that the number of prior ``observed'' values we have are equal for all models, for example, 64 values, which is also the parameter number for Markov 2. Thus,I set the prior distribution for Markov 0 be a Dirichlet with hyperparamter $(16, 16, 16, 16)$, while the prior distribution for Markov 1 be four independent Dirichlet, with hyperparameter $(4,4,4,4)$ and for the Markov 2 case 16 independent Dirichelet with hyperparameter $(1,1,1,1)$.
+
+\subsection {Experiment Result}
+
+1000 Bayes factor in terms of Markov 0 vs Markov 1 and Markov 1 vs Markov 2 for each of the sequences are generated. The histograms are as followed. We can see that Bayes Factor favors Markov 2 over Markov 1 and Markov 1 over Markov 0.
+ 
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=.8]{bf-hist}
+  \caption{Histogram of Bayes Factor beween Markov (0){\em vs} Markov (1) (Left) and Markov (1) {\em vs} Markov (2) (Right)}
+\end{figure}
+
+The mean value for $B_{01}$ is 0.0012 and mean value for $B_{12}$ is 2.3740e-21. The model that Bayes factor supports is indeed the real generating model.
 %----------------------------------------------------------------------------------------
 %	PROBLEM 4
 %----------------------------------------------------------------------------------------
