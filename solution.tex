@@ -51,6 +51,7 @@
 \usepackage{float}
 
 \setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+\setlength{\parskip}{10pt plus 1pt minus 1pt}
 
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
@@ -187,9 +188,12 @@ One thing to notice is the setting of prior parameter. For the Markov 0 case, it
 \\\\
 To make it fair, we should ensure that the number of prior ``observed'' values we have are equal for all models, for example, 64 values, which is also the parameter number for Markov 2. Thus,I set the prior distribution for Markov 0 be a Dirichlet with hyperparamter $(16, 16, 16, 16)$, while the prior distribution for Markov 1 be four independent Dirichlet, with hyperparameter $(4,4,4,4)$ and for the Markov 2 case 16 independent Dirichelet with hyperparameter $(1,1,1,1)$.
 
+
 \subsection {Experiment Result}
 
-1000 Bayes factor in terms of Markov 0 vs Markov 1 and Markov 1 vs Markov 2 for each of the sequences are generated. The histograms are as followed. We can see that Bayes Factor favors Markov 2 over Markov 1 and Markov 1 over Markov 0.
+{\bf Bayes factor histograms}
+\\\\
+Using the 500 values in the sequence, 1000 Bayes factor in terms of Markov 0 vs Markov 1 and Markov 1 vs Markov 2 for each of the sequences are generated. The histograms are as followed. We can see that Bayes Factor favors Markov 2 over Markov 1 and Markov 1 over Markov 0.
  
 \begin{figure}[H]
   \centering
@@ -198,6 +202,17 @@ To make it fair, we should ensure that the number of prior ``observed'' values w
 \end{figure}
 
 The mean value for $B_{01}$ is 0.0012 and mean value for $B_{12}$ is 2.3740e-21. The model that Bayes factor supports is indeed the real generating model.
+\\\\
+{\bf Bayes factor vs number of values}
+\\\\
+The relationship between Bayes factor and the number of values used in calculation is plotted as followed:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=.8]{bf-nval}
+  \caption{Bayes factor vs number of values}
+\end{figure}
+
 %----------------------------------------------------------------------------------------
 %	PROBLEM 4
 %----------------------------------------------------------------------------------------
@@ -277,6 +292,77 @@ The low error mean for both small and great $p$ can be explained like above. In 
 Though certain observations may be flipped, the cases in which $S_1$ emits $O_2$ are compansated by the fact that roughly the same amount of emission from $S_2$ to $O_1$, thus the sufficient statistics does not change much.
 
 As a conclusion, the error mean for $p=0.5$ does not vary much from that of large or small $p$ values.
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 5
+%----------------------------------------------------------------------------------------
+\section{Problem 5}
+\subsection {Choice of HMM parameter}
+
+The state transition probability matrix is set to:
+
+\begin{table}[H]
+\caption{State transition probability matrix}
+\centering
+\begin{tabular}{c|ccc}
+  & CpG rich & CpG poor  \\ \hline
+  CpG rich & 0.99 & 0.01 \\
+  CpG poor & 0.01 & 0.99
+\end {tabular}
+\end {table}
+
+
+The emission probability matrix is set to:
+
+\begin{table}[H]
+\caption{Emission probability matrix}
+\centering
+\begin{tabular}{c|cccc}
+  & A & C & G & T  \\ \hline
+  CpG rich & 0.05 & 0.49 & 0.49 & 0.05 \\
+  CpG poor & 0.49 & 0.05 & 0.05 & 0.49
+\end {tabular}
+\end {table}
+
+In this way, we can ensure that state is very unlikely to transfer to the other counterpart and CpG rich state is much likely to produces $C$ and $G$, while CpG poor state is much likely to produces $A$ and $T$
+\subsection {Visualization}
+
+100 sequences each of length 100 using the preivously stated model are randomly generated. To achieve more natural visual contrast between the state sequence and emission sequence, the emitted symbol set are transformed in the following way, $G$ and $C$ are combined into one state, CpG rich, while $A$ and $T$ are combined into CpG poor. Thus, emission sequences are converted into the same type as state sequence, which involves only two states.
+
+The visualization for both sequences is as followed:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=.8]{gene_viz}
+  \caption {Visualization for 100 transformed emission sequences(left) and the underlying state sequences(right).}
+  \label {fig:5.gene_viz}
+\end{figure}
+
+As we can see, state sequences are ``tidier'' than the emission sequence in the sense that there are fewer times of state flipping.
+
+\subsection {Modeling as oridinary Markov chain}
+
+In case of modeling this process using ordinary first order Markov chain, the state space becomes ${\text{CpG rich}, \text{CpG poor}}$, the problem of paramter estimation boils down to estimate the state transition probabilites.
+
+ML estimation is chosen as the  parameter estimation method. 
+
+Before estimation, we reassign the emission symbols in the following way, $C$ and $G$ are treated as state CpG rich and $A$ and $T$ are treated as state CpG poor.  This is done to fit the data into the proposed model. No smoothing technique is used here.
+
+The result is:
+
+\begin{table}[H]
+\caption{Estimated state transition probability matrix}
+\centering
+\begin{tabular}{c|ccc}
+  & CpG rich & CpG poor  \\ \hline
+  CpG rich & 0.8669 &   0.1331 \\
+  CpG poor & 0.2678 &   0.7322
+\end {tabular}
+\end {table}
+
+As we can see, compared to the generating parameter, the estimated result is ``smoothed out'' to some extent, in the sense that the probabilitis are centered, compared to the true values. For example, probability from CpG rich to CpG rich is 0.8669, which is less than the true value, 0.99, while from CpG rich to CpG poor yields probability 0.1331, which is larger than 0.01.
+
+The cause for this phenomenon is due to the randomness in the emission process. There is some possibility for CpG rich state to produce symbols $A$ and $T$, though such probability is low. One direct consequence is the interspersing constrasting subsequences (e.g, the little green spots in the left image in \ref{fig:5.gene_viz}) in the emisbsion sequences. Those contrasting short subsequences increases occurences of CpG rich transiting to CpG poor and CpG poor transiting to CpG rich. Thus, they serve as the ``bridge'' that connects the underlying two states and make them seem to transit to each other more often if the ordiinary Markov model is considered.
 
 %------------------------------------------------
 
