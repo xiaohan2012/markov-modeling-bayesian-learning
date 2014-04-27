@@ -362,7 +362,56 @@ The result is:
 
 As we can see, compared to the generating parameter, the estimated result is ``smoothed out'' to some extent, in the sense that the probabilitis are centered, compared to the true values. For example, probability from CpG rich to CpG rich is 0.8669, which is less than the true value, 0.99, while from CpG rich to CpG poor yields probability 0.1331, which is larger than 0.01.
 
-The cause for this phenomenon is due to the randomness in the emission process. There is some possibility for CpG rich state to produce symbols $A$ and $T$, though such probability is low. One direct consequence is the interspersing constrasting subsequences (e.g, the little green spots in the left image in \ref{fig:5.gene_viz}) in the emisbsion sequences. Those contrasting short subsequences increases occurences of CpG rich transiting to CpG poor and CpG poor transiting to CpG rich. Thus, they serve as the ``bridge'' that connects the underlying two states and make them seem to transit to each other more often if the ordiinary Markov model is considered.
+The cause for this phenomenon is due to the randomness in the emission process. There is some possibility for CpG rich state to produce symbols $A$ and $T$, though such probability is low. One direct consequence is the interspersing constrasting subsequences (e.g, the little green spots in the left image in ~\ref{fig:5.gene_viz}) in the emisbsion sequences. Those contrasting short subsequences increases occurences of CpG rich transiting to CpG poor and CpG poor transiting to CpG rich. Thus, they serve as the ``bridge'' that connects the underlying two states and make them seem to transit to each other more often if the ordiinary Markov model is considered.
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 5
+%----------------------------------------------------------------------------------------
+\section {Problem 5}
+\subsection {Data preparation}
+First order Markov chain (Markov (1)) is chosen as the models to be studied in this problem, as relavant utility Matlab packages can be used directly.
+
+To order to investigate the effect of sequence length, we consider two types of sequence length change pattern, exponential increase, $1, 2, 4, \cdots, 256$ and linear increase, $100, 200, \cdots, 1000$, in order to investigate the effect in more details. Rather than predefine the modal parameters, the parameters are generated randomly. If we define one iteration of simulation as the process of generating one sequence of each sequence length respectively, then in one simulation iteration, the model parameters are the same, while it does not hold true for two independent iterations.
+
+In order to mitigate the effect of randomness in model parameter and study the effect in the general case, the process is performed 50 times, each with independently generated model parameters.
+
+\subsection {Estimation setup}
+
+For each iteration of model parameter estimation, two paramter estimation algorithms, Baum-Welch algorithm and Viterbi algorithm are used. In other words, we estimate the parameter twice for a given model using the two algorithms respectively.
+
+For both algorithms, it is required to give an initial guess for the model parameter for the algorithms to start with. As the initial guess can have a great influence on the final result, the initial guess to set the be not far from the real model parameter, for example, for each probability value, its difference to the real value is within $[-0.05, 0.05]$. We make this choice because we are only interested in the effect of sequence length on estimated model parameter in this problem, huge variation in estimation result is not desirable. So,  giving a good starting point for the estimation algorithm helps the algorithms converge as close as possible to the real parameters, thus mitigating variation problem and enabling us to focus sequence length.
+
+To avoid the avoid zero probability estimates for emissions in Viterbi learning, which is more likely t happen for short sequence, we specify the pseudocount emission values for all entries to be 1.
+
+\subsection {Error measurement}
+In each iteration of model estimation, to measure the error of estimated parameters, average squared error is used here. In this case, it is defined as followed:
+
+\[ E () = 1 / (M N + N P) (\sum\limits_{i,j}^{M,N} (A_{i,j} - A^{'}_{i,j})^{2} + \sum\limits_{i^{'},j^{'}}^{N,P} (B_{i^{'},j^{'}} - B^{'}_{i^{'},j^{'}})^{2})\]
+
+in which, $A$, an M by N matrix and $B$, an N by P matrix, are the generating  state transition parameters and the emission parameters respectively.  $A^{'}$  and $B^{'}$ are the corresponding estimation.
+
+The final error made in each sequence length setting is simply the average of all iterations of paramter estimation for the corresponding length.
+
+\subsection {Effect of sequence length}
+
+After running the all simulation iterations, error rate plot for both the linear increasing case and exponential increasing case are given as followed:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=.8]{err_vs_seqlen}
+  \caption {Average of mean square error rate vs sequence length: (Left) sequence length changes exponentially from 1 to 512 by power of 2. (Right) sequence length changes linearly from 100 to 1000 by step size of 100.}
+  \label{fig:6.err_vs_seqlen}
+\end{figure}
+
+\subsection {Discussion on sequence length effect}
+
+As we can see in ~\ref{fig:6.err_vs_seqlen}, the effect of sequence length differs in terms of different estimation algorithms. 
+
+In the case of Baum Welch algorithm, the estimation error drops remarkably as the sequence length increases, while the situation for Viterbi algorithm is quite counter-intuitive. Despite a sligh drop at the begining in the left figure, the error does not change as greatly as that of Baum Welch algorithm. Although Baum Welch algorithms generally performs better for longer sequence (length larger than roughly 16 in this experiment),Viterbi algorithm performs better for shorter sequences (length $\le$ 16 roughly), as we can see in the following figure, and is more stable than Baum Welch algorithm.
+
+The seemingly stability of Viterbi algorithm reflects the relative low accuracy compared to Baum Welch algorithm. This is closely related to the nature of Viterbi algorihtm, which saves running time in sacrifice of estimation accuracy, which explains why Viterbi algorithm performs generally worse than Baum Welch algorithm. However, the explanation of stability is out of the scope of this study.
+
+In terms of how length increasing pattern affects parameter estimation, Viterbi algorithm is not so typical as it does not change much. While for Baum Welch algorithm, the error rate drops in a nearly linear fashion if the length increases linearly while drops exponentially if the length increase exponentially. This reflects the fact that Baum Welch algorithm's estimation accuracy is closely related to the sequence length in a way that it is possible to fit a curve in terms of how accuracy changes with sequence length and predict such accuracy given new sequence length.
 
 %------------------------------------------------
 
