@@ -19,6 +19,5 @@ log_probs2 = pred_log_probs_2 (tstats);
 
 
 %get the Bayes Factors of between M0 and M1, M1 and M2, plot the histogram
-
 B01 = exp(log_probs0 - log_probs1);
 B12 = exp(log_probs1 - log_probs2);

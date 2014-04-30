@@ -61,7 +61,7 @@
 
 \title{	
 \normalfont \normalsize 
-\textsc{University if Helsinki, Department of Computer Science} \\ [25pt] % Your university, school and/or department name(s)
+\textsc{University of Helsinki, Department of Computer Science} \\ [25pt] % Your university, school and/or department name(s)
 \horrule{0.5pt} \\[0.4cm] % Thin top horizontal rule
 \huge Markov Modeling and Bayesian Learning \\ % The assignment title
 \horrule{2pt} \\[0.5cm] % Thick bottom horizontal rule
@@ -81,42 +81,44 @@
 
 \section{Problem 1}
 
-\lipsum[2] % Dummy text
+\subsection{Sequence generation}
 
-Sequence generation:
-
-For some given sequence length $T$, the following configuraiton is made:
+For given sequence length $T$, which can be arbitrary, the following configuration is made to generate sequences randomly:
 
 \begin {itemize}
   \item Each sequence is generated according to some {\em random} state transition probability table $P$.
-  \item Each entry in table $P$ are equal
-  \item The starting probabilities for each bigram are equal (0.25).
+  \item Each probability entry in table $P$ is  equal to each other
+  \item The starting probabilities for each bigram are equal (0.25)
 \end {itemize}
 
+Then 1000 sequences are randomly generated in order to reduce the randomness of the final result. 
 
-Then {\em 1000} sequences was randomly generated, each of which is used to estimate the parameters by Maximum Likelihood estimation and Bayesian estimation.
-
-Denote the estimated parameters as $P'_{ijk}$ and the true parameters as $P_{ijk}$, the error rate for each estimated paraemter is calculated as:
+\subsection{Error measurement}
+Denote the estimated parameters as $P'_{ijk}$ and the true parameters as $P_{ijk}$, the error rate for each estimated parameter is calculated as:
 
 \[ E_{ijk} = \frac{|P'_{ijk} - P_{ijk}|} {P_{ijk}} \]
 
-And the total error rate of the estimated paramters is calculated as the mean of all the individual error rates:
+And the total error rate of the estimated parameter's is calculated as the mean of all the individual error rates:
 
 \[E_{total} = \frac {1} {n} \sum\limits_{ijk} \frac{|P'_{ijk} - P_{ijk}| }{ P_{ijk}}\]
 
-where $n$ is the number of paramters, which is $64$ in this case.
+where $n$ is the number of parameters, which is $64$ in this case.
 
-The resuling plot is like: 
+\subsection{Estimation}
+Second order Markov model is used in estimation. For maximum likelihood estimation, the estimated result is acquired by dividing the sufficient statistics of trigrams by that of the corresponding bigrams, while for Bayesian estimation, conjugate prior equal to Dirichlet distribution with hyperparameters $\lambda=(1, \dots, 1)$ is used.
+
+\subsection{Simulation result}
+The following simulation is done. Sequence lengths, 100, 200, 300, 400, 500 are considered and 1000 sequences for each length are generated randomly and independently, ML estimation and Bayesian estimation are performed and the corresponding error for each method are calculated.
+
+The final plot for the error rate of both methods in case of different length is as followed:
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=.8]{mle-be-estimation}
-  \caption{Comparison between MLE and BE for various sequence lengths}
+  \caption{Comparison between Maximum Likelihood estimation and Bayes-ion estimation under sequence length 100, 200, 300, 400, 500}
 \end{figure}
 
-%how to set matlab plot size
-%set(0, 'DefaultFigurePosition', [ left bottom width height ]);
-
+As we can see, as the sequence length increases, the estimation becomes more accurate. This result is expected.
 
 %----------------------------------------------------------------------------------------
 %	PROBLEM 2
@@ -139,140 +141,154 @@ For the Markov 0 model, the predictive probability
 p (x| M_0) = \int_{\Theta} \theta_{A}^{n_{A}} \theta_{C}^{n_{C}} \theta_{G}^{n_{G}} \theta_{T}^{n_{T}} d\Theta
 \end {equation}
 
-in which $\theta_A, \theta_C, \theta_G, \theta_T$ are the multinomial process parameters, which sum up to 1. $n_A, n_C, n_G, n_T$ are the number of occurences of ${A, C, G, T}$ respectively. In addition $\Theta = (\theta_A, \theta_C, \theta_G, \theta_T)$.
+in which $\theta_A, \theta_C, \theta_G, \theta_T$ are the multinomial process parameters, which sum up to 1. $n_A, n_C, n_G, n_T$ are the number of occurrences of ${A, C, G, T}$ respectively. In addition $\Theta = (\theta_A, \theta_C, \theta_G, \theta_T)$.
 \\\\
-Similarly, the first order Markov chain case involves four independent multinimial processes, in which each process is preceded by one of the values. The predictive probability in this case is:
+Similarly, the first order Markov chain case involves four independent multinomial processes, in which each process is preceded by one of the values. The predictive probability in this case is:
 
 \begin {align*}
-p (x| M_1) &= \int_{\Theta_A} \theta_{AA}^{n_{AA}} \theta_{AC}^{n_{AC}} \theta_{AG}^{n_{AG}} \theta_{AT}^{n_{AT}} d\Theta_A \times\\
-&= \int_{\Theta_C} \theta_{CA}^{n_{CA}} \theta_{CC}^{n_{CC}} \theta_{CG}^{n_{CG}} \theta_{CT}^{n_{CT}} d\Theta_C \times \\
-&= \int_{\Theta_G} \theta_{GA}^{n_{GA}} \theta_{GC}^{n_{GC}} \theta_{GG}^{n_{GG}} \theta_{GT}^{n_{GT}} d\Theta_G \times \\
-&= \int_{\Theta_T} \theta_{TA}^{n_{TA}} \theta_{TC}^{n_{GC}} \theta_{TG}^{n_{TG}} \theta_{TT}^{n_{TT}} d\Theta_T \\
+p (x| M_1) = &\int_{\Theta_A} \theta_{AA}^{n_{AA}} \theta_{AC}^{n_{AC}} \theta_{AG}^{n_{AG}} \theta_{AT}^{n_{AT}} d\Theta_A \times\\
+& \int_{\Theta_C} \theta_{CA}^{n_{CA}} \theta_{CC}^{n_{CC}} \theta_{CG}^{n_{CG}} \theta_{CT}^{n_{CT}} d\Theta_C \times \\
+& \int_{\Theta_G} \theta_{GA}^{n_{GA}} \theta_{GC}^{n_{GC}} \theta_{GG}^{n_{GG}} \theta_{GT}^{n_{GT}} d\Theta_G \times \\
+& \int_{\Theta_T} \theta_{TA}^{n_{TA}} \theta_{TC}^{n_{GC}} \theta_{TG}^{n_{TG}} \theta_{TT}^{n_{TT}} d\Theta_T \\
 \end {align*}
 
-in which, $n_{i,j}$, where $i,j \in {A,C,G,T}$, denotes the number of occurences of $(i,j)$ pairs in the sequence. Similarly, $\theta_{i,j}$ denotes the probability for $j$ to occur in case of being preceded by $i$. $\Theta_i$ denotes the parameter set $(\theta_{i,A}, \theta_{i,C}, \theta_{i,G}, \theta_{i,T})$.
+in which, $n_{i,j}$, where $i,j \in \{A,C,G,T\}$, denotes the number of occurrences of $(i,j)$ pairs in the sequence. Similarly, $\theta_{i,j}$ denotes the probability for $j$ to occur in case of being preceded by $i$. $\Theta_i$ denotes the parameter set $(\theta_{i,A}, \theta_{i,C}, \theta_{i,G}, \theta_{i,T})$.
 \\\\
 Similarly, the second order Markov chain is extended to 16 independent multinomial process. The predictive probability is:
 
 \begin {equation}
-  p (x| M_2) = \prod_{i,j} \int_{\Theta_{ij}} \theta_{i,j,A}^{n_{i,j,A}} \theta_{i,j,C}^{n_{i,j,C}} \theta_{i,j,G}^{n_{i,j,G}} \theta_{i,j,T}^{n_{i,j,T}} d\Theta_{i,j} 
+  p (x| M_2) = \prod_{i,j \in \{A,C,G,T\}} \int_{\Theta_{ij}} \theta_{i,j,A}^{n_{i,j,A}} \theta_{i,j,C}^{n_{i,j,C}} \theta_{i,j,G}^{n_{i,j,G}} \theta_{i,j,T}^{n_{i,j,T}} d\Theta_{i,j} 
 \end {equation}  
 
 Assuming a Dirichlet distribution as the prior for the multinomial process, the integral has analytical result. 
 \\\\
-For the Markov 0 model, 
+For the $M_0$ model, 
 \begin {equation}
-p (x| M_0) = \frac{\Gamma (\alpha_A + \alpha_C + \alpha_G + \alpha_T) \prod\limits_{m \in {A,C,G,T}} \Gamma (\alpha_m + n_m)} {\prod\limits_{m \in {A,C,G,T}} \Gamma (\alpha_m) \Gamma (\sum\limits_{m \in {A,C,G,T}}\alpha_m + \sum\limits_{m \in {A,C,G,T}}n_m)}
+p (x| M_0) = \frac{\Gamma (\alpha_A + \alpha_C + \alpha_G + \alpha_T) \prod\limits_{m \in \{A,C,G,T\}} \Gamma (\alpha_m + n_m)} {\prod\limits_{m \in \{A,C,G,T\}} \Gamma (\alpha_m) \Gamma (\sum\limits_{m \in \{A,C,G,T\}}\alpha_m + \sum\limits_{m \in \{A,C,G,T\}}n_m)}
 \end {equation}  
 
-For the Markov 1 model
+For the $M_1$ model
 
 \begin {equation}
-p (x| M_1) = \prod\limits_{i \in {A,C,G,T}} \frac{\Gamma (\alpha_{iA} + \alpha_{iC} + \alpha_{iG} + \alpha_iT) \prod\limits_{m \in {A,C,G,T}} \Gamma (\alpha_{im} + n_{im})} {\prod\limits_{m \in {A,C,G,T}} \Gamma (\alpha_{im}) \Gamma (\sum\limits_{m \in {A,C,G,T}}\alpha_{im} + \sum\limits_{m \in {A,C,G,T}}n_{im})}
+p (x| M_1) = \prod\limits_{i \in \{A,C,G,T\}} \frac{\Gamma (\alpha_{iA} + \alpha_{iC} + \alpha_{iG} + \alpha_iT) \prod\limits_{m \in \{A,C,G,T\}} \Gamma (\alpha_{im} + n_{im})} {\prod\limits_{m \in \{A,C,G,T\}} \Gamma (\alpha_{im}) \Gamma (\sum\limits_{m \in \{A,C,G,T\}}\alpha_{im} + \sum\limits_{m \in \{A,C,G,T\}}n_{im})}
 \end {equation}  
 
-For the Markov 2 model
+For the $M_2$ model
 
 \begin {equation}
-p (x| M_1) = \prod\limits_{i,j \in {A,C,G,T}} \frac{\Gamma (\alpha_{ijA} + \alpha_{ijC} + \alpha_{ijG} + \alpha_ijT) \prod\limits_{m \in {A,C,G,T}} \Gamma (\alpha_{ijm} + n_{ijm})} {\prod\limits_{m \in {A,C,G,T}} \Gamma (\alpha_{ijm}) \Gamma (\sum\limits_{m \in {A,C,G,T}}\alpha_{ijm} + \sum\limits_{m \in {A,C,G,T}}n_{ijm})}
+p (x| M_1) = \prod\limits_{i,j \in \{A,C,G,T\}} \frac{\Gamma (\alpha_{ijA} + \alpha_{ijC} + \alpha_{ijG} + \alpha_ijT) \prod\limits_{m \in \{A,C,G,T\}} \Gamma (\alpha_{ijm} + n_{ijm})} {\prod\limits_{m \in \{A,C,G,T\}} \Gamma (\alpha_{ijm}) \Gamma (\sum\limits_{m \in \{A,C,G,T\}}\alpha_{ijm} + \sum\limits_{m \in \{A,C,G,T\}}n_{ijm})}
 \end {equation}  
 
-\subsection {Experiment Setup}
+\subsection {Simulation Setup}
 
-I generated 1000 sequences, each of which is generated based on randomly generated state transition table, in which each entry in the table are uniformly distribued (and then normalized). In other word, two levels of randomness are involved. First level is associated with the random nature of the generation of gene sequence, which is essentially a Markov random process. Second level of randomness is associated with the randomness of Markov state transition probability table. 
-\\\\ 
-The purpose of the extra level of randomness is to avoid using a fixed or a fixed set of Markov random process, thus enable us to observe Bayes Factor in the general case.
-
-\subsection {Pitfall of Prior Setup}
-One thing to notice is the setting of prior parameter. For the Markov 0 case, it is tempting to set the prior as $Beta (1, 1, 1, 1)$ and for the markov 1 case, four priors all be the same, $Beta (1, 1, 1, 1)$. However, there is one problem here in terms of both interpretation and theory. In tmerms of interpretation, the prior $Beta (1,1,1,1)$  resembles that we have some statistics in which each type of values appear once prior to our experiment. Then unfairness arises. For the Markov 0 case, we have 4 such values, while for Markov 1 case, with 4 priors, we have 16 such values ``beforehand'', which is not reasonable. 
-\\\\
-To make it fair, we should ensure that the number of prior ``observed'' values we have are equal for all models, for example, 64 values, which is also the parameter number for Markov 2. Thus,I set the prior distribution for Markov 0 be a Dirichlet with hyperparamter $(16, 16, 16, 16)$, while the prior distribution for Markov 1 be four independent Dirichlet, with hyperparameter $(4,4,4,4)$ and for the Markov 2 case 16 independent Dirichelet with hyperparameter $(1,1,1,1)$.
+1000 sequences are generated, each of which is generated based on randomly generated state transition table, in which each entry in the table are uniformly distributed (and then normalised). In other word, two levels of randomness are involved. First level is associated with the random nature of the generation of gene sequence, which is essentially a Markov random process. Second level of randomness is  the randomness of underlying Markov state transition probability table. 
 
 
-\subsection {Experiment Result}
+The purpose of the extra level of randomness is to enable us to investigate Bayes Factor in the general case.
+
+\subsection {Pitfall of prior setup}
+One thing to notice is the setting of the  prior parameter of the Dirichlet distribution. For the $M_0$ case, it is fine to set the prior as $Beta (1, 1, 1, 1)$ , however, for the $M_1$, it is tempting to set all four priors all be the same as $M_0$ case, $Beta (1, 1, 1, 1)$. However, there is one problem here in terms of both interpretation and theory. In terms of interpretation, the prior $Beta (1,1,1,1)$  resembles that we have some ``prior'' statistics on each possible value's occurrence frequency. Then unfairness arises. For the $M_0$, we have 4 occurrence's in total, while for $M_1$, with 4 priors, we have 16 such values, which receives more data than $M_0$. This is not reasonable. 
+
+To make it fair, we should ensure that the sum of prior hyperparameters be equal for all models. If we set the sum to be 64 values. Then, for $M_0$, the prior hyperparameter would be $(16, 16, 16, 16)$, for $M_1$, it should have four independent Dirichlet, with hyperparameter $(4,4,4,4)$ and for$M_2$, 16 independent Dirichlet distributions are involved, each is hyperparameters by $(1,1,1,1)$.
+
+\subsection {Simulation Result}
 
 {\bf Bayes factor histograms}
 \\\\
-Using the 500 values in the sequence, 1000 Bayes factor in terms of Markov 0 vs Markov 1 and Markov 1 vs Markov 2 for each of the sequences are generated. The histograms are as followed. We can see that Bayes Factor favors Markov 2 over Markov 1 and Markov 1 over Markov 0.
+Using the 500 values in the sequence, 1000 sequences are generated, each of which is considered as an independent dataset and the corresponding  Bayes factor between ($M_0$, $M_1$) and ($M_1$, $M_2$) is calculated. The histogram are as followed. 
  
 \begin{figure}[H]
   \centering
   \includegraphics[scale=.8]{bf-hist}
-  \caption{Histogram of Bayes Factor beween Markov (0){\em vs} Markov (1) (Left) and Markov (1) {\em vs} Markov (2) (Right)}
+  \caption{Histogram of Bayes Factor of $M_{01}$(Above) and $M_{12}$(Below) calculated from 1000 sequences of length 500}
 \end{figure}
+  
+We can see that Bayes Factor favours $M_2$ over $M_1$ and $M_1$ over $M_0$.
 
-The mean value for $B_{01}$ is 0.0012 and mean value for $B_{12}$ is 2.3740e-21. The model that Bayes factor supports is indeed the real generating model.
+The mean value for $B_{01}$, $B_{12}$ is $0.0012$, $2.3740 \times 10^{-21}$. The model that Bayes factor supports is indeed the real generating model, $M_2$.
 \\\\
-{\bf Bayes factor vs number of values}
+{\bf Bayes factor vs sequence length}
 \\\\
-The relationship between Bayes factor and the number of values used in calculation is plotted as followed:
+We consider the effect of sequence length, 100, 200, 300, 400 and 500 on Bayes factor respectively. The Bayes factor using each sequence is calculated and the averaged according to the underlying sequence length. For example, for length 100, 1000 sequences are generated thus 1000 Bayes factors for $M_{01}$ are calculated. To evaluate the overall Bayes factor value, the mean of 1000 Bayes factors is calculated.
+
+The relationship between Bayes factor and the sequence length used in calculation is plotted as followed:
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=.8]{bf-nval}
-  \caption{Bayes factor vs number of values}
+  \caption{Bayes factor vs number of values: (above) $M_{01}$, (below) $M_{12}$}
 \end{figure}
+
+We can see an increasing trend of Bayes factor value for both $M_{01}$ and $M_{12}$ as the length increases. This is somewhat counter-intuitive, because as more data is involved in the calculation, the more sensible model should be preferred more.
+
+\section{Problem 3}
+Skip
 
 %----------------------------------------------------------------------------------------
 %	PROBLEM 4
 %----------------------------------------------------------------------------------------
 
 \section{Problem 4}
-\subsection {Phenomenon}
-I fix $p$ and vary the error parameter $\varepsilon$ from 0 to 1 at a step size of 0.05. Then for each $\varepsilon$, 500 HMM sequences are generated randomly by $P$ and $E$.
 
-The error of the parameter estimation $P^{'}$ is defined as the mean of the element-wise difference between $P$ and $P^{'}$ 
+\subsection {Simulation setup}
+In order to investigate the effect of $\varepsilon$. the value of $p$ in the transition probability matrix is first fixed and $\varepsilon$ is varied  from 0 to 1 at a step size of 0.05. For each $\varepsilon$ value, 500 sequences are generated randomly using the 1st order HMM parametrized by $A$ and $B$, which correspond to the state transition matrix and emission matrix respectively.
 
-\[ \mathrm{Error} (P^{'}, P) = \frac {1} {4} \sum_{i} \sum_{j} \frac{|P^{'}_{i,j} - P_{i,j}|}{P_{i,j}} \]
+The initial state parameters are set to be equal, $[0.5, 0.5]$.
 
-The error mean for $p \in \{0.2, 0.5, 0.8\}$ are given below:
+\subsection{Error measurement}
+
+The error of the estimated parameter $A^{'}$ is defined as the mean of the element-wise absolute relative difference between $A$ and $A^{'}$.
+
+\[ \mathrm{Error} (A^{'}, A) = \frac {1} {4} \sum_{i} \sum_{j} \frac{|A^{'}_{i,j} - A_{i,j}|}{A_{i,j}} \]
+
+\subsection {Simulation result}
+
+We consider three values of $p$, where $p \in \{0.2, 0.5, 0.8\}$. Using the above simulation setup for each $p$ value, the measured errors are given in the following three plots:
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=.8]{{noisyhmm-errorrate-p=0.200000}.png}
-  \caption {ML parameter estimation error when $p$=0.2}
+  \caption {ML parameter estimation error when $p$=0.2 in cases $\varepsilon$ from 0 to 1 at a step size $0.05$}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=.8]{{noisyhmm-errorrate-p=0.500000}.png}
-  \caption {ML parameter estimation error when $p$=0.5}
+  \caption {ML parameter estimation error when $p$=0.5 in cases $\varepsilon$ from 0 to 1 at a step size $0.05$}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[scale=.8]{{noisyhmm-errorrate-p=0.800000}.png}
-  \caption {ML parameter estimation error when $p$=0.8}
+  \caption {ML parameter estimation error when $p$=0.8 in cases $\varepsilon$ from 0 to 1 at a step size $0.05$}
 \end{figure}
 
-\subsection {Explanation}
+\subsection {Oberservation \& Explanation}
 
-There are two remarkable oberservations.
+There are two remarkable observations.
 
-\begin{itemize}
-\item for $p=0.2$ and $p=0.8$, the error mean first increases. After reaching the peak at about 0.8, it starts to fall.
-\item while the plot for $p=0.2$ and $p=0.8$ are very similar, the plot for $p=0.5$ is not the case, it is flat!
-\end {itemize}
+\begin{enumerate}
+\item for $p=0.2$ and $p=0.8$, the error mean first increases. After reaching the peak at about 0.8, it starts to fall. 
+\item while the plot for $p=0.2$ and $p=0.8$ are very similar, the plot for $p=0.5$ is not the case, it is flat.
+\end {enumerate}
 
-For the {\em first observation}:\newline
+In the following, explanation is made to interprete the observation: 
 
-Denote the state set as $\{S_1, S_2\}$ and the observation set as $\{O_1, O_2\}$. \newline
+\textbf{For the first observation:}\\
+
+Denote the state set as $\{S_1, S_2\}$ and the observation set as $\{O_1, O_2\}$. 
 
 For the first observation, it is intuitive to come up that lower error mean results from lower $\varepsilon$. Because the observations reflect the true state transition more or less accurately. 
 
-However, it might be counterintuitive for large $\varepsilon$. Here are some explanation for this counter-intuition. \newline
+However, it might be counter-intuitive for large $\varepsilon$ to have the similar pattern. Here are some explanation. 
 
-Let's assume $\varepsilon=1$, in which case each observation is flipped from its true underlying state. That is $S_1$ generates $O_2$ and $S_2$ generates $O_1$. 
+First, we denote the count of certain observations as $C (O_i)$ or $C (O_i, O_j)$ for the count of $(O_i)$ and $(O_i, O_j)$ pairs respectively and the notation applies to state symbols similarly.
 
-We denote the count of certain observations as $C (O_1)$ or $C (O_1, O_2)$ for the count of $(O_1, O_2)$ pairs. Then $C (O_1, O_1) = C (S_2, S_2)$, $C (O_2, O_2) = C (S_1, S_1)$ , $C (O_2, O_1) = C (S_1, S_2)$ and $C (O_1, O_2) = C (S_2, S_1)$ 
+Let's assume the extreme case, $\varepsilon=1$, in which case each observation is flipped from its true underlying state. That is $S_1$ generates $O_2$ and $S_2$ generates $O_1$. Then $C (O_1, O_1) = C (S_2, S_2)$, $C (O_2, O_2) = C (S_1, S_1)$ , $C (O_2, O_1) = C (S_1, S_2)$ and $C (O_1, O_2) = C (S_2, S_1)$.
 
-As there is only one parameter $p$ for the HMM state transition process, $C(S_1,S_1) \approx C(S_2,S_2)$ should be roughly equal if sample size is large enough. Similarly, $C(S_1, S_2) \approx C(S_2, S_1)$. 
+As there is only one parameter $p$ for the HMM state transition process, $C(S_1,S_1) $ and $ C(S_2,S_2)$ should be approximately equal if sample size is large enough. Similarly, $C(S_1, S_2) \approx C(S_2, S_1)$. Also as initial state distribution's entries are equal in this simulation setting, $C (S_1) \approx C (S_2)$.  As a result, $C (O_1, O_1) \approx C (O_2, O_2)$ and $C (O_2, O_1) \approx C (O_1, O_2)$ and $C (O_1) \approx C (O_2)$. 
 
-Also assuming a uniform initial state distribution, $C (S_1) \approx C (S_2)$. \newline
-
-As a result, $C (O_1, O_1) \approx C (O_2, O_2)$ and $C (O_2, O_1) \approx C (O_1, O_2)$ and $C (O_1) \approx C (O_2)$. 
-
-As a illustration, we estimate the probability from $S_1$ to $S_2$:
+As a illustration, we want to estimate the probability from $S_1$ to $S_2$:
 
 \begin {align*}
   P (S_1, S_2) &= \frac {C (S_2)} {C (S_1, S_2)} \\
@@ -281,15 +297,15 @@ As a illustration, we estimate the probability from $S_1$ to $S_2$:
   &=P (O_1, O_2)
 \end {align*}
 
-Therefore, the error mean for large $\varepsilon$ is quite close to that of small $\varepsilon$.\newline
+In which, $P (O_1, O_2)$ is our estimated probability from $S_2$ to $S_1$, by using the observations and  $P (S_1, S_2)$ is the estimated result by using the underlying states, which is closer to the real parameter. As they are approximately equal, the error mean for large $\varepsilon$ is as low as that of small $\varepsilon$.
 
-For the {\em second observation}:\newline
+\textbf{For the second observation:} \\
 
 When $p=0.5$, the state transition process is like tossing a fair coin again and again.
 
 The low error mean for both small and great $p$ can be explained like above. In case $\varepsilon=0.5$, flipping of the observation is like another process of tossing fair coin.
 
-Though certain observations may be flipped, the cases in which $S_1$ emits $O_2$ are compansated by the fact that roughly the same amount of emission from $S_2$ to $O_1$, thus the sufficient statistics does not change much.
+Though certain observations may be flipped, the cases in which $S_1$ emits $O_2$ are compensated by the fact that roughly the same amount of emission from $S_2$ to $O_1$, thus the sufficient statistics does not change much.
 
 As a conclusion, the error mean for $p=0.5$ does not vary much from that of large or small $p$ values.
 
@@ -302,7 +318,7 @@ As a conclusion, the error mean for $p=0.5$ does not vary much from that of larg
 The state transition probability matrix is set to:
 
 \begin{table}[H]
-\caption{State transition probability matrix}
+\caption{State transition probability matrix: column labels represent source states and row labels represent target states}
 \centering
 \begin{tabular}{c|ccc}
   & CpG rich & CpG poor  \\ \hline
@@ -324,34 +340,32 @@ The emission probability matrix is set to:
 \end {tabular}
 \end {table}
 
-In this way, we can ensure that state is very unlikely to transfer to the other counterpart and CpG rich state is much likely to produces $C$ and $G$, while CpG poor state is much likely to produces $A$ and $T$
-\subsection {Visualization}
+In this way, we can ensure that state is very unlikely to transfer to its  counterpart and CpG rich state is much likely to produces $C$ and $G$, while CpG poor state is much likely to produces $A$ and $T$
+\subsection {Data generation \& Visualization}
 
-100 sequences each of length 100 using the preivously stated model are randomly generated. To achieve more natural visual contrast between the state sequence and emission sequence, the emitted symbol set are transformed in the following way, $G$ and $C$ are combined into one state, CpG rich, while $A$ and $T$ are combined into CpG poor. Thus, emission sequences are converted into the same type as state sequence, which involves only two states.
+100 sequences each of length 100 using the previously stated model are randomly generated. To achieve more natural visual contrast between the state sequence and emission sequence, the emitted symbol set are transformed in the following way, $G$ and $C$ are combined into one symbol, CpG rich, while $A$ and $T$ are combined into CpG poor. Thus, emission sequences are converted into the same type as state sequence, which involves only two states.
 
 The visualization for both sequences is as followed:
 
 \begin{figure}[H]
-  \centering
+  \center
   \includegraphics[scale=.8]{gene_viz}
+  \label{fig:5.gene_viz}
   \caption {Visualization for 100 transformed emission sequences(left) and the underlying state sequences(right).}
-  \label {fig:5.gene_viz}
 \end{figure}
 
 As we can see, state sequences are ``tidier'' than the emission sequence in the sense that there are fewer times of state flipping.
 
-\subsection {Modeling as oridinary Markov chain}
+\subsection {Modeling as ordinary Markov chain}
 
-In case of modeling this process using ordinary first order Markov chain, the state space becomes ${\text{CpG rich}, \text{CpG poor}}$, the problem of paramter estimation boils down to estimate the state transition probabilites.
+In case of modeling this process using ordinary first order Markov chain, the state space becomes $\{{\text{CpG rich}, \text{CpG poor}}\}$, the problem of parameter estimation boils down to estimate the state transition probabilities. ML estimation is chosen as the  parameter estimation method. 
 
-ML estimation is chosen as the  parameter estimation method. 
+Before estimation, we reassign the emission symbols in the following way, $C$ and $G$ are treated as CpG rich and $A$ and $T$ are treated as CpG poor. This is done to fit the data into this ordinary Markov model. No smoothing technique is used here.
 
-Before estimation, we reassign the emission symbols in the following way, $C$ and $G$ are treated as state CpG rich and $A$ and $T$ are treated as state CpG poor.  This is done to fit the data into the proposed model. No smoothing technique is used here.
-
-The result is:
+The estimated state transition probabilities are given below:
 
 \begin{table}[H]
-\caption{Estimated state transition probability matrix}
+\caption{Estimated state transition probability matrix using the 1st order Markov model }
 \centering
 \begin{tabular}{c|ccc}
   & CpG rich & CpG poor  \\ \hline
@@ -360,28 +374,28 @@ The result is:
 \end {tabular}
 \end {table}
 
-As we can see, compared to the generating parameter, the estimated result is ``smoothed out'' to some extent, in the sense that the probabilitis are centered, compared to the true values. For example, probability from CpG rich to CpG rich is 0.8669, which is less than the true value, 0.99, while from CpG rich to CpG poor yields probability 0.1331, which is larger than 0.01.
+As we can see, compared to the generating parameter, the estimated result is ``smoothed out'' to some extent, in the sense that the probabilities are centered towards 0.5, compared to the true values. For example, probability from CpG rich to CpG rich is 0.8669, which closer to 0.5 than the true value 0.99. The same applies to the probability from CpG rich to CpG poor, 0.1331, compared to the true value 0.01.
 
-The cause for this phenomenon is due to the randomness in the emission process. There is some possibility for CpG rich state to produce symbols $A$ and $T$, though such probability is low. One direct consequence is the interspersing constrasting subsequences (e.g, the little green spots in the left image in ~\ref{fig:5.gene_viz}) in the emisbsion sequences. Those contrasting short subsequences increases occurences of CpG rich transiting to CpG poor and CpG poor transiting to CpG rich. Thus, they serve as the ``bridge'' that connects the underlying two states and make them seem to transit to each other more often if the ordiinary Markov model is considered.
+The cause for this phenomenon is due to the randomness in the emission process. There is some possibility for CpG rich state to produce symbols $A$ and $T$, though such probability is low. One direct consequence is the interspersing contrasting subsequences (e.g, the little green spots in the left image in the Figure ~\ref{fig:5.gene_viz}) in the emission sequences. Those contrasting short subsequences increases occurrences of CpG rich transiting to CpG poor and CpG poor transiting to CpG rich. Thus, they serve as the ``bridge'' that connects the underlying two states and make them seem to transit to each other more often if the ordinary Markov model is considered.
 
 %----------------------------------------------------------------------------------------
-%	PROBLEM 5
+%	PROBLEM 6
 %----------------------------------------------------------------------------------------
-\section {Problem 5}
+\section {Problem 6}
 \subsection {Data preparation}
-First order Markov chain (Markov (1)) is chosen as the models to be studied in this problem, as relavant utility Matlab packages can be used directly.
+First order Markov chain (Markov (1)) is chosen as the models to be studied in this problem, as relevant utility Matlab packages can be used directly.
 
-To order to investigate the effect of sequence length, we consider two types of sequence length change pattern, exponential increase, $1, 2, 4, \cdots, 256$ and linear increase, $100, 200, \cdots, 1000$, in order to investigate the effect in more details. Rather than predefine the modal parameters, the parameters are generated randomly. If we define one iteration of simulation as the process of generating one sequence of each sequence length respectively, then in one simulation iteration, the model parameters are the same, while it does not hold true for two independent iterations.
+In order to investigate the effect of sequence length, we consider two types of sequence length change pattern, exponential increase, $1, 2, 4, \cdots, 256$ and linear increase, $100, 200, \cdots, 1000$, in order to investigate the effect in more details. Rather than predefine the modal parameters, the parameters are generated randomly. If we define one iteration of simulation as the process of generating one sequence of each sequence length respectively, then in one such iteration, the model parameters are the same, while it does not hold true for two different iterations.
 
 In order to mitigate the effect of randomness in model parameter and study the effect in the general case, the process is performed 50 times, each with independently generated model parameters.
 
 \subsection {Estimation setup}
 
-For each iteration of model parameter estimation, two paramter estimation algorithms, Baum-Welch algorithm and Viterbi algorithm are used. In other words, we estimate the parameter twice for a given model using the two algorithms respectively.
+For each iteration of model parameter estimation, two parameter estimation algorithms, Baum-Welch algorithm and Viterbi algorithm are used. In other words, we estimate the parameter twice for a given model using the two algorithms.
 
-For both algorithms, it is required to give an initial guess for the model parameter for the algorithms to start with. As the initial guess can have a great influence on the final result, the initial guess to set the be not far from the real model parameter, for example, for each probability value, its difference to the real value is within $[-0.05, 0.05]$. We make this choice because we are only interested in the effect of sequence length on estimated model parameter in this problem, huge variation in estimation result is not desirable. So,  giving a good starting point for the estimation algorithm helps the algorithms converge as close as possible to the real parameters, thus mitigating variation problem and enabling us to focus sequence length.
+For both algorithms, it is required to give an initial guess for the model parameter for the algorithms to start with. As the initial guess can have a great influence on the final result, the initial guess to set the be not far from the real model parameter, for example, for each probability entry, it difference to the real value is within $[-0.05, 0.05]$. We make this choice because we are only interested in the effect of sequence length on estimated model parameter in this problem, huge variation in estimation result due to the initial guessing is not desirable. So  giving a good starting point for the estimation algorithm helps the algorithms converge as close as possible to the real parameters, thus swiping off irrelevant factors and enabling us to focus sequence length.
 
-To avoid the avoid zero probability estimates for emissions in Viterbi learning, which is more likely t happen for short sequence, we specify the pseudocount emission values for all entries to be 1.
+To avoid the avoid zero probability estimates for emissions in Viterbi learning, which is more likely t happen for short sequence, we specify the pseudo-count emission values for all entries to be 1.
 
 \subsection {Error measurement}
 In each iteration of model estimation, to measure the error of estimated parameters, average squared error is used here. In this case, it is defined as followed:
@@ -390,7 +404,7 @@ In each iteration of model estimation, to measure the error of estimated paramet
 
 in which, $A$, an M by N matrix and $B$, an N by P matrix, are the generating  state transition parameters and the emission parameters respectively.  $A^{'}$  and $B^{'}$ are the corresponding estimation.
 
-The final error made in each sequence length setting is simply the average of all iterations of paramter estimation for the corresponding length.
+The final error made in each sequence length setting is simply the average of the average square error from all iterations of parameter estimation.
 
 \subsection {Effect of sequence length}
 
@@ -405,39 +419,12 @@ After running the all simulation iterations, error rate plot for both the linear
 
 \subsection {Discussion on sequence length effect}
 
-As we can see in ~\ref{fig:6.err_vs_seqlen}, the effect of sequence length differs in terms of different estimation algorithms. 
+As we can see in Figure ~\ref{fig:6.err_vs_seqlen}, the effect of sequence length differs in terms of different estimation algorithms. 
 
-In the case of Baum Welch algorithm, the estimation error drops remarkably as the sequence length increases, while the situation for Viterbi algorithm is quite counter-intuitive. Despite a sligh drop at the begining in the left figure, the error does not change as greatly as that of Baum Welch algorithm. Although Baum Welch algorithms generally performs better for longer sequence (length larger than roughly 16 in this experiment),Viterbi algorithm performs better for shorter sequences (length $\le$ 16 roughly), as we can see in the following figure, and is more stable than Baum Welch algorithm.
+In the case of Baum Welch algorithm, the estimation error drops remarkably as the sequence length increases, while the situation for Viterbi algorithm is quite counter-intuitive. Despite a slight drop at the beginning in the left figure, the error does not change as greatly that much compared to Baum Welch algorithm. Although Baum Welch algorithms generally performs better for longer sequence (length larger than roughly 16 in this experiment), Viterbi algorithm performs better for shorter sequences (length $\le$ 16 roughly), as we can see in the following figure, and is more stable than Baum Welch algorithm.
 
-The seemingly stability of Viterbi algorithm reflects the relative low accuracy compared to Baum Welch algorithm. This is closely related to the nature of Viterbi algorihtm, which saves running time in sacrifice of estimation accuracy, which explains why Viterbi algorithm performs generally worse than Baum Welch algorithm. However, the explanation of stability is out of the scope of this study.
+The seemingly stability of Viterbi algorithm reflects the relative low accuracy compared to Baum Welch algorithm. This is closely related to the nature of Viterbi algorithm, which saves running time in sacrifice of estimation accuracy. This explains why Viterbi algorithm performs generally worse than Baum Welch algorithm. However, the explanation of stability is out of the scope of this study.
 
-In terms of how length increasing pattern affects parameter estimation, Viterbi algorithm is not so typical as it does not change much. While for Baum Welch algorithm, the error rate drops in a nearly linear fashion if the length increases linearly while drops exponentially if the length increase exponentially. This reflects the fact that Baum Welch algorithm's estimation accuracy is closely related to the sequence length in a way that it is possible to fit a curve in terms of how accuracy changes with sequence length and predict such accuracy given new sequence length.
-
-%------------------------------------------------
-
-\subsection{Example of list (3*itemize)}
-\begin{itemize}
-	\item First item in a list 
-		\begin{itemize}
-		\item First item in a list 
-			\begin{itemize}
-			\item First item in a list 
-			\item Second item in a list 
-			\end{itemize}
-		\item Second item in a list 
-		\end{itemize}
-	\item Second item in a list 
-\end{itemize}
-
-%------------------------------------------------
-
-\subsection{Example of list (enumerate)}
-\begin{enumerate}
-\item First item in a list 
-\item Second item in a list 
-\item Third item in a list
-\end{enumerate}
-
-%----------------------------------------------------------------------------------------
+In terms of how length increasing pattern affects parameter estimation, Viterbi algorithm is not so typical as it does not change much. While for Baum Welch algorithm, the error rate drops in a nearly linear fashion if the length increases linearly while drops exponentially if the length increase exponentially. This reflects the fact that Baum Welch algorithm's estimation accuracy is closely related to the sequence length. It is even possible to fit a curve in terms of how accuracy changes with sequence length and predict such accuracy given new sequence length.
 
 \end{document}

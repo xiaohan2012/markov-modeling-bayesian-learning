@@ -15,7 +15,6 @@ plot (Ts, errors (:, 1)', 'r-o')
 hold on
 plot (Ts, errors (:, 2)', 'b-o')
 
-title ('MLE and BE error rates for various sequence lengths');
 xlabel ('Sequnce length');
 ylabel ('Error rate');
 
@@ -23,4 +22,4 @@ axis([90 510 0 0.04]);
 
 legend ('Maximum likelihood estimation', 'Bayesian estimation');
 
-saveas (gcf, 'result.png', 'png' )
+saveas (gcf, '../imgs/result.png', 'png' )

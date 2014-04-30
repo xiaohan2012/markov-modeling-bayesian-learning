@@ -6,7 +6,7 @@ N = 100;
 %length of the sequence
 n = 100;
 
-p = .5;%rand ();
+p = 0.8;%change it to your like
 
 errors = 0:.05:1; %the error rate in emission prob varying from .1 to .9 step size .1
 
@@ -49,9 +49,6 @@ clf
 plot (errors, param_error_e, 'o-');
 
 param_error_e
-
-title (sprintf(['ML parameter estimation error when p=%f under different ' ...
-                'error rate epsilon'], p));
 
 xlabel ('\epsilon');
 ylabel ('Parameter estimation error mean');
